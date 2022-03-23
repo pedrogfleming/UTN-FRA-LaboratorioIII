@@ -1,0 +1,10 @@
+p{
+    color: green;
+}
+li{
+    color: pink;
+    background-color:black;
+    border-radius: 20%;
+    width: fit-content;
+    
+}

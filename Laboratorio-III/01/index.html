@@ -1,0 +1,76 @@
+<!-- El Doctype indica al navegador la version de html a continuacion  -->
+<!DOCTYPE html>
+<!--Con lang Indicamos el idioma al browser en que vamos a tener nuestra pagina -->
+<html lang="en">
+<!--Head no es visible -->
+
+<head>
+    <!--  Referenciamos el archivo css, con path relativo o absoluto-->
+    <!--  el ./ es directorio actual, ../ directorio padre -->
+    <link rel="stylesheet" href="./estilos.css">
+    <!-- Meta son etiquetas de configuracion de la pagina -->
+    <meta charset="UTF-8">
+    <!-- El viewport es la parte visible en el momento de nuestra pagina web -->
+    <!-- Se setea por default que se adapte al ancho del dispostivo(responsive) y sin zoom -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--title: El nombre de la pestaña -->
+    <title>Document</title>
+</head>
+
+<body>
+    <!-- Aca va lo que vemos en la pagina -->
+    <h1>
+        <!-- H1 es la mas grande, H6 es la mas chica -->
+        Esto es un encabezado bien fachero
+    </h1>
+    <!-- <ul type="square"> -->
+    <ul type="dots">
+        <!-- ul>li*5  para autocompletar lo siguiente-->
+        <li>Lunes</li>
+        <li>Martes</li>
+        <li>Miercoles</li>
+        <li>Jueves</li>
+        <li>Viernes</li>
+    </ul>
+    <!-- ordered list -->
+    <!-- <ol> -->
+    <ol type="I">
+    <!-- type es el tipo de enumerado y start es a partir de que indice arranca -->
+    <!-- <ol type="A" start="5"> -->
+    <!-- Reversed es el orden al revez -->
+    <ol type="A" reversed>
+        <li>Pera</li>
+        <li>Banana</li>
+        <li>Manzana</li>
+        <li>Sanda</li>
+        <li>Mandarina</li>
+    </ol>
+    <!-- Definition list -->
+    <dl>
+        <dt>Java</dt>
+        <dd>Lorem ipsum dolor sit amet.</dd>
+        <dt>Javascript</dt>
+        <dd>Lorem ipsum dolor sit amet.</dd>
+    </dl>
+
+    <th>
+        <table>
+            <thead>
+                <tr>Id</tr>
+                <tr>Nombre</tr>
+                <tr>Apellido</tr>
+                <tr>Edad</tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>4</td>
+                    <td>Maria</td>
+                    <td>Gonzales</td>
+                    <td>23</td>
+                </tr>                
+            </tbody>
+        </table>
+    </th>
+</body>
+
+</html>
