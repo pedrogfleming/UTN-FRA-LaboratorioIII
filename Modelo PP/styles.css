@@ -1,0 +1,55 @@
+.grid-container {
+    display: grid;
+    grid-template-columns: auto auto auto;
+    background-color: #2196F3;
+    padding: 1px;
+}
+
+.grid-item {
+    background-color: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(0, 0, 0, 0.8);
+    padding: 1px;
+    font-size: 10px;
+    text-align: center;
+}
+
+/* ---------------------------- TABLA -------------------------- */
+#divTabla {
+    margin: 20px 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+table,
+td,
+th {
+    border: 1px solid black;
+}
+
+td,
+th {
+    padding: 5px;
+}
+
+thead {
+    background-color: rgb(0, 255, 106);
+}
+
+table {
+    border-radius: 10px;
+    border-collapse: collapse;
+}
+
+tbody tr:hover {
+    background-color: rgba(78, 212, 107, 0.534);
+}
+
+.notVisible {
+    display: none;
+}
+
+.Visible {
+    visibility: visible;
+}
