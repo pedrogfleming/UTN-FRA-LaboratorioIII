@@ -16,7 +16,7 @@ export function inicializarManejadores() {
     actualizarTabla(LS_Personas);
     // TODO tienen que ser botones
     const filas = document.querySelectorAll('tr');
-    manejadorEventoFilas(filas);
+    // manejadorEventoFilas(filas);
 
     document.addEventListener('refrescarTablaPersonas', (event) => {
         const LS_Personas = localStorage.getObj(entidades);
@@ -25,9 +25,47 @@ export function inicializarManejadores() {
         actualizarTabla(LS_Personas);
         // TODO tienen que ser botones
         const filas = document.querySelectorAll('tr');
-        manejadorEventoFilas(filas);
+        // manejadorEventoFilas(filas);
         dataOut.style.display = "block";
     });
+
+    document.addEventListener('mostrarFormularioModificacion', (event) => {
+        const LS_Personas = toObjs(localStorage.getObj(entidades));
+        let idFila = event.detail;
+        let obj = LS_Personas.find((persona) => persona.id == idFila);
+
+        vaciarElemento(formDatos);
+        GenerarVista("form");
+        crearFormUpdate(formDatos, obj);
+    });
+    document.addEventListener('eliminarEntidad', (event) => {
+        let LS_Personas = toObjs(localStorage.getObj(entidades));
+        let targetid = parseInt(event.detail);
+        LS_Personas = LS_Personas.filter((elemento) => elemento.id !== targetid);
+
+        localStorage.removeItem(entidades);
+        localStorage.setObj(entidades, LS_Personas);
+
+        const eventRefrescar = new CustomEvent('refrescarTablaPersonas');
+        document.dispatchEvent(eventRefrescar);
+    });
+}
+
+function manejadorEventoFilas(filas) {
+    const LS_Personas = toObjs(localStorage.getObj(entidades));
+    filas.forEach((fila) => {
+        //Evitamos asignar el evento al header
+        if(fila.classList.value != "cabecera"){
+            // OnClick para modificar la la entidad de la fila
+            fila.addEventListener('click', () => {
+                let idFila = fila.id;
+                let obj = LS_Personas.find((persona) => persona.id == idFila);
+                vaciarElemento(formDatos);
+                GenerarVista("form");
+                crearFormUpdate(formDatos, obj);
+            });
+        }
+    })
 }
 
 export function actualizarTabla(personas) {
@@ -41,8 +79,7 @@ export function actualizarTabla(personas) {
     const botonAgregar = document.createElement('button');
     botonAgregar.innerHTML = "Agregar Elemento";
     botonAgregar.addEventListener('click', () => {
-        dataOut.style.display = "none";
-        dataIn.style.display = "block";
+        GenerarVista("form");
         crearFormAlta(formDatos);
     });
     divTabla.appendChild(botonAgregar);
@@ -66,22 +103,7 @@ export function actualizarTabla(personas) {
     // TODO Agregar boton modificar en cada fila
 }
 
-function manejadorEventoFilas(filas) {
-    const LS_Personas = toObjs(localStorage.getObj(entidades));
-    filas.forEach((fila) => {
-        //Evitamos asignar el evento al header
-        if(fila.classList.value != "cabecera"){
-            // OnClick para modificar la la entidad de la fila
-            fila.addEventListener('click', () => {
-                let idFila = fila.id;
-                let obj = LS_Personas.find((persona) => persona.id == idFila);
-                vaciarElemento(formDatos);
-                GenerarVista("form");
-                crearFormUpdate(formDatos, obj);
-            });
-        }
-    })
-}
+
 
 export function vaciarElemento(elemento) {
     while (elemento.firstChild) {

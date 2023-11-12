@@ -33,8 +33,6 @@ export function crearFormUpdate(formulario, obj) {
     botonGuardar.innerText = "Aceptar";
     elementos.push(botonGuardar);
 
-
-
     const botonCancelar = document.createElement('button');
     botonCancelar.innerText = "Cancelar";
     elementos.push(botonCancelar);
@@ -80,8 +78,9 @@ export function crearFormUpdate(formulario, obj) {
 
 export function crearFormAlta(formulario){
     formulario.innerText = "Formulario Alta";
-    let obj = new Vehiculo("", "", "", "");
+    let obj = new Persona("", "", "", "");
     let elementos = [];
+    // TODO agregar opcion "elegir tipo"
     let opciones = ["Empleado", "Cliente"];
     const selectorTipo = document.createElement("select");    
 

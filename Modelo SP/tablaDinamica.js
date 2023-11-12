@@ -20,19 +20,38 @@ function crearCuerpo(data, cabecera) {
 
     data.forEach(obj => {
         const fila = document.createElement("tr");
-
         // TODO agregar botones como contenido de la celda si son las ultimas dos)
         cabecera.forEach(c => {
             const celda = document.createElement("td");
             if (c === "id") {
                 fila.setAttribute("id", obj[c]);
-            } else {
-                celda.textContent = obj[c];
-                celda.id = c;
-                fila.appendChild(celda);
+                return;
             }
+            else if (c === "Modificar") {
+                const b = document.createElement('button');
+                b.innerText = c;
+                b.addEventListener('click', () => {
+                    const eventMostrarForm = new CustomEvent('mostrarFormularioModificacion', { detail: fila.id});
+                    document.dispatchEvent(eventMostrarForm);
+                });
+                celda.appendChild(b);
+            }
+            else if (c === "Eliminar"){
+                const b = document.createElement('button');
+                b.innerText = c;
+                b.addEventListener('click', () => {
+                    const eventMostrarForm = new CustomEvent('eliminarEntidad', { detail: fila.id});
+                    document.dispatchEvent(eventMostrarForm);
+                });
+                celda.appendChild(b);
+            }
+            else {
+                celda.textContent = obj[c] ? obj[c] : "N/A";
+                celda.id = c;
+            }
+            celda.id = c;
+            fila.appendChild(celda);
         });
-
         cuerpo.appendChild(fila);
     });
 
@@ -45,7 +64,8 @@ export function crearTabla(cabecera, data) {
     if (!Array.isArray(data)) {
         return null;
     }
-
+    cabecera.push("Modificar");
+    cabecera.push("Eliminar");
     const tabla = document.createElement("table");
     tabla.setAttribute('id', 'tabla');
     tabla.appendChild(crearCabecera(cabecera));
