@@ -3,16 +3,22 @@ import Arr_Update from "./arrayHelper.js"
 
 const entidades = "personas";
 
+const opcionesTipos = ["Cliente", "Empleado", "Elegir tipo"];
+const opcionesIndices = {
+    Cliente: 0,
+    Empleado: 1,
+    ElegirTipo: 2
+};
 export function crearFormUpdate(formulario, obj) {
     formulario.innerText = "Formulario Modificacion";
     let elementos = [];
-    let opciones = ["Cliente", "Empleado"];
+    let opciones = opcionesTipos;
     const selectorTipo = crearSelector(opciones);
     selectorTipo.disabled = true;
-    
-    if(obj instanceof Cliente) selectorTipo.selectedIndex = 0;
-    else if(obj instanceof Empleado) selectorTipo.selectedIndex = 1;
-    
+
+    if (obj instanceof Cliente) selectorTipo.selectedIndex = opcionesIndices["Cliente"];
+    else if (obj instanceof Empleado) selectorTipo.selectedIndex = opcionesIndices["Empleado"];
+
     elementos.push(selectorTipo);
     if (obj === null) {
         obj = new Persona("", "", "", "");
@@ -21,7 +27,7 @@ export function crearFormUpdate(formulario, obj) {
     let props = Object.getOwnPropertyNames(obj);
     props.forEach(p => {
         let soloLectura = false;
-        if(p == "id"){
+        if (p == "id") {
             soloLectura = true;
         }
         let ret = agregarCampos(p, obj[p], soloLectura);
@@ -50,7 +56,7 @@ export function crearFormUpdate(formulario, obj) {
 
         let objModificado = null;
 
-        if(!validarInputs(inputs, selectorTipo.selectedOptions[0].value)) {
+        if (!validarInputs(inputs, selectorTipo.selectedOptions[0].value)) {
             alert("Datos incorrectos");
             return;
         }
@@ -58,7 +64,7 @@ export function crearFormUpdate(formulario, obj) {
             objModificado = new Cliente(obj.id, inputs["nombre"], inputs["apellido"], inputs["edad"], inputs["compras"], inputs["telefono"]);
         }
         else if (obj instanceof Empleado) {
-            objModificado = new Empleado(obj.id, inputs["nombre"], inputs["apellido"], inputs["edad"], inputs["sueldo"], inputs["sueldo"]);
+            objModificado = new Empleado(obj.id, inputs["nombre"], inputs["apellido"], inputs["edad"], inputs["sueldo"], inputs["ventas"]);
         }
         if (objModificado) {
             // TODO llamar a la api para modificar objeto
@@ -76,60 +82,62 @@ export function crearFormUpdate(formulario, obj) {
 }
 
 
-export function crearFormAlta(formulario){
+export function crearFormAlta(formulario) {
     formulario.innerText = "Formulario Alta";
     let obj = new Persona("", "", "", "");
     let elementos = [];
-    // TODO agregar opcion "elegir tipo"
-    let opciones = ["Empleado", "Cliente"];
-    const selectorTipo = document.createElement("select");    
+
+    let opciones = opcionesTipos;
+    const selectorTipo = document.createElement("select");
 
     for (var i = 0; i < opciones.length; i++) {
         var option = document.createElement("option");
         option.value = opciones[i];
-        option.text = opciones[i];        
+        option.text = opciones[i];
         selectorTipo.appendChild(option);
         elementos.push(selectorTipo);
     }
+
+
+    selectorTipo.selectedIndex = opcionesIndices["ElegirTipo"]; // "Elegir tipo"
     selectorTipo.addEventListener("change", (event) => {
         botonGuardar.disabled = false;
         let nuevosFormFields = [];
         removerCampos();
 
-        if(selectorTipo.selectedOptions[0].value == "Empleado"){                
-            if(!formulario["sueldo"]){
-                let ret = agregarCampos("sueldo","",false);
+        if (selectorTipo.selectedOptions[0].value == "Empleado") {
+            if (!formulario["sueldo"]) {
+                let ret = agregarCampos("sueldo", "", false);
                 nuevosFormFields.push(ret.nuevoLabel);
                 nuevosFormFields.push(ret.nuevoInput);
             }
-            if(!formulario["ventas"]){
-                let ret = agregarCampos("ventas","",false);
+            if (!formulario["ventas"]) {
+                let ret = agregarCampos("ventas", "", false);
                 nuevosFormFields.push(ret.nuevoLabel);
                 nuevosFormFields.push(ret.nuevoInput);
             }
-            obj = new Empleado(obj.id, obj.nombre,obj.apellido,  obj.edad, "", "");
+            obj = new Empleado(obj.id, obj.nombre, obj.apellido, obj.edad, "", "");
         }
-        else if(selectorTipo.selectedOptions[0].value == "Cliente"){
-            if(!formulario["compras"]){
-                let ret = agregarCampos("compras","",false);
+        else if (selectorTipo.selectedOptions[0].value == "Cliente") {
+            if (!formulario["compras"]) {
+                let ret = agregarCampos("compras", "", false);
                 nuevosFormFields.push(ret.nuevoLabel);
                 nuevosFormFields.push(ret.nuevoInput);
             }
-            if(!formulario["telefono"]){
-                let ret = agregarCampos("telefono","",false);
+            if (!formulario["telefono"]) {
+                let ret = agregarCampos("telefono", "", false);
                 nuevosFormFields.push(ret.nuevoLabel);
                 nuevosFormFields.push(ret.nuevoInput);
             }
-            obj = new Cliente(obj.id, obj.nombre,obj.apellido, "", "");
+            obj = new Cliente(obj.id, obj.nombre, obj.apellido, "", "");
         }
         nuevosFormFields.forEach((e) => formulario.appendChild(e));
-        
     })
-
+    selectorTipo.selectedIndex = opcionesIndices["ElegirTipo"]; // "Elegir tipo"
     let props = Object.getOwnPropertyNames(obj);
     props.forEach(p => {
         let soloLectura = false;
-        if(p == "id"){
+        if (p == "id") {
             soloLectura = true;
         }
         let ret = agregarCampos(p, obj[p], soloLectura);
@@ -148,16 +156,16 @@ export function crearFormAlta(formulario){
         props.forEach(p => {
             inputs[p] = document.getElementsByTagName("input")[p].value;
         });
-        if(!validarInputs(inputs, selectorTipo.selectedOptions[0].value)) {
+        if (!validarInputs(inputs, selectorTipo.selectedOptions[0].value)) {
             alert("Datos incorrectos");
             return;
         }
         // TODO Chequear que la api de numero de id
         let nuevoId = localStorage.getObj('nextId') || 20000;
-        if(selectorTipo.selectedIndex == 0){
+        if (selectorTipo.selectedIndex == opcionesIndices["Empleado"]) {
             obj = new Empleado(nuevoId, inputs["nombre"], inputs["apellido"], inputs["edad"], inputs["sueldo"], inputs["ventas"]);
         }
-        else if(selectorTipo.selectedIndex == 1){
+        else if (selectorTipo.selectedIndex == opcionesIndices["Cliente"]) {
             obj = new Cliente(nuevoId, inputs["nombre"], inputs["apellido"], inputs["edad"], inputs["compras"], inputs["telefono"]);
         }
         if (obj) {
@@ -199,7 +207,7 @@ function agregarCampos(innerText, value, soloLectura) {
     return { nuevoLabel, nuevoInput };
 }
 
-function removerCampos(){
+function removerCampos() {
     const formulario = document.getElementById("formDatos");
     // propiedades de las clases hijas no presentes en la clase padre
     const elementosAEliminar = ["sueldo", "ventas", "compras", "telefono"];
@@ -219,7 +227,7 @@ function removerCampos(){
     });
 }
 
-function validarInputs(inputs, objType){
+function validarInputs(inputs, objType) {
     // TODO agregar validaciones
     // let datosInvalidos = []
     // datosInvalidos["nombre"] = inputs["nombre"] !== undefined && '';
@@ -237,12 +245,12 @@ function validarInputs(inputs, objType){
     return true;
 }
 
-export function crearSelector(opciones){
-    const selectorTipo = document.createElement("select");    
+export function crearSelector(opciones) {
+    const selectorTipo = document.createElement("select");
     for (var i = 0; i < opciones.length; i++) {
         var o = document.createElement("option");
         o.value = opciones[i];
-        o.text = opciones[i];        
+        o.text = opciones[i];
         selectorTipo.appendChild(o);
     }
     return selectorTipo;
