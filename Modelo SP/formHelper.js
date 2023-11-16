@@ -1,5 +1,7 @@
 import { Persona, Empleado, Cliente, toObjs } from "./persona.js"
 import Arr_Update from "./arrayHelper.js"
+import { HttpHandler } from "./httpHandler.js";
+import { crearSpinner, quitarSpinner } from "./spinnerHelper.js"
 
 const entidades = "personas";
 
@@ -68,6 +70,9 @@ export function crearFormUpdate(formulario, obj) {
         }
         if (objModificado) {
             // TODO llamar a la api para modificar objeto
+            // const httpHandler = new HttpHandler();
+            // httpHandler.sendPostAsync(objModificado);
+
             let LS_Personas = toObjs(localStorage.getObj(entidades));
             Arr_Update(LS_Personas, obj, objModificado);
             localStorage.removeItem(entidades);
@@ -87,6 +92,7 @@ export function crearFormAlta(formulario) {
     let obj = new Persona("", "", "", "");
     let elementos = [];
 
+    // RENDERIZADO DE FORM
     let opciones = opcionesTipos;
     const selectorTipo = document.createElement("select");
 
@@ -150,6 +156,7 @@ export function crearFormAlta(formulario) {
     botonGuardar.disabled = true;
     elementos.push(botonGuardar);
 
+    // GUARDAR CAMBIOS
     botonGuardar.addEventListener('click', () => {
         let inputs = [];
         props = Object.getOwnPropertyNames(obj);
@@ -162,6 +169,7 @@ export function crearFormAlta(formulario) {
         }
         // TODO Chequear que la api de numero de id
         let nuevoId = localStorage.getObj('nextId') || 20000;
+
         if (selectorTipo.selectedIndex == opcionesIndices["Empleado"]) {
             obj = new Empleado(nuevoId, inputs["nombre"], inputs["apellido"], inputs["edad"], inputs["sueldo"], inputs["ventas"]);
         }
@@ -169,19 +177,32 @@ export function crearFormAlta(formulario) {
             obj = new Cliente(nuevoId, inputs["nombre"], inputs["apellido"], inputs["edad"], inputs["compras"], inputs["telefono"]);
         }
         if (obj) {
-            let LS_Personas = toObjs(localStorage.getObj(entidades));
-            // TODO Chequear si hay que llamar la api para agregar elemento nuevo
-            LS_Personas.push(obj);
-            localStorage.removeItem(entidades);
-            localStorage.setObj(entidades, LS_Personas);
-            let siguienteId = obj.id;
-            // TODO Chequear si la api me asigna id
-            siguienteId++;
-            localStorage.setItem('nextId', siguienteId);
+            crearSpinner();
+            const httpHandler = new HttpHandler();
+            httpHandler.sendPostAsync(obj).then(response => {
+                if (response.success) {
+                    let LS_Personas = toObjs(localStorage.getObj(entidades));
+                    LS_Personas.push(obj);
 
-            const event = new CustomEvent('refrescarTablaPersonas', { detail: LS_Personas });
-            document.dispatchEvent(event);
-        }
+                    localStorage.removeItem(entidades);
+                    localStorage.setObj(entidades, LS_Personas);
+                    let siguienteId = obj.id;
+
+                    siguienteId++;
+                    localStorage.setItem('nextId', siguienteId);
+
+                    const event = new CustomEvent('refrescarTablaPersonas', { detail: LS_Personas });
+                    document.dispatchEvent(event);
+                }
+                else {
+                    alert(response.response);
+                }
+            })
+            .catch(error => alert(error))
+            .finally(() =>{
+                quitarSpinner();
+            });
+        };
     });
 
     const botonCancelar = document.createElement('button');

@@ -2,6 +2,8 @@ import { crearTabla } from "./tablaDinamica.js";
 import { crearFormUpdate, crearFormAlta, crearSelector } from "./formHelper.js";
 import { toObjs } from "./persona.js"
 import { Arr_GetAllUniqueProps } from "./arrayHelper.js"
+import { crearSpinner, quitarSpinner } from "./spinnerHelper.js"
+import { HttpHandler } from "./httpHandler.js";
 
 let divTabla;
 let formDatos;
@@ -9,23 +11,20 @@ let dataOut = document.getElementById("dataOut");
 const entidades = "personas";
 
 export function inicializarManejadores() {
+
     const LS_Personas = localStorage.getObj(entidades);
     divTabla = document.getElementById('divTabla');
     formDatos = document.getElementById('formDatos');
 
-    actualizarTabla(LS_Personas);
-    // TODO tienen que ser botones
-    const filas = document.querySelectorAll('tr');
-    // manejadorEventoFilas(filas);
-
+    actualizarTabla(LS_Personas);    
     document.addEventListener('refrescarTablaPersonas', (event) => {
-        const LS_Personas = localStorage.getObj(entidades);
+        // TODO implementar cache
+        const httpHandler = new HttpHandler();
+        const personas = httpHandler.sendGetSync();
+        localStorage.setObj("personas", personas);
+        
         vaciarElemento(formDatos);
-        // TODO llamar a la api con get
-        actualizarTabla(LS_Personas);
-        // TODO tienen que ser botones
-        const filas = document.querySelectorAll('tr');
-        // manejadorEventoFilas(filas);
+        actualizarTabla(personas);
         dataOut.style.display = "block";
     });
 
@@ -51,24 +50,8 @@ export function inicializarManejadores() {
     });
 }
 
-function manejadorEventoFilas(filas) {
-    const LS_Personas = toObjs(localStorage.getObj(entidades));
-    filas.forEach((fila) => {
-        //Evitamos asignar el evento al header
-        if(fila.classList.value != "cabecera"){
-            // OnClick para modificar la la entidad de la fila
-            fila.addEventListener('click', () => {
-                let idFila = fila.id;
-                let obj = LS_Personas.find((persona) => persona.id == idFila);
-                vaciarElemento(formDatos);
-                GenerarVista("form");
-                crearFormUpdate(formDatos, obj);
-            });
-        }
-    })
-}
-
 export function actualizarTabla(personas) {
+
     GenerarVista("tabla");
     vaciarElemento(divTabla);
 
@@ -83,6 +66,7 @@ export function actualizarTabla(personas) {
         crearFormAlta(formDatos);
     });
     divTabla.appendChild(botonAgregar);
+
 
     // TODO Agregar boton eliminar en cada fila
 

@@ -1,4 +1,6 @@
-export class HttpHandler{
+import { toObjs } from "./persona.js"
+
+export class HttpHandler {
     constructor() {
         if (!this.XMLHttpRequest) {
             this.XMLHttpRequest = new XMLHttpRequest();
@@ -12,16 +14,42 @@ export class HttpHandler{
     sendGetSync() {
         this.XMLHttpRequest.open("GET", GetUrl(), false);
         this.XMLHttpRequest.send();
-        if (this.XMLHttpRequest.status  === 200) {
-            return this.XMLHttpRequest.responseText;
+        if (this.XMLHttpRequest.status === 200) {
+            const jsonString = this.XMLHttpRequest.responseText;
+            const jsonArray = JSON.parse(jsonString);
+            const entidades = toObjs(jsonArray);
+            return entidades;
         }
-        else{
+        else {
             console.log("error on sending request to the server: " + this.XMLHttpRequest.status);
         }
     }
 
-    sendPost($body) {
-
+    async sendPostAsync(body) {
+        var initializer = {
+            method: 'POST',
+            headers: { "Content-type": "application/json" },
+            mode: 'cors',
+            cache: 'default',
+            body: JSON.stringify(body)
+        };
+        fetch(GetUrl(), initializer)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("HTTP error " + response.status);
+                }
+                else {                    
+                    return response.json();
+                }
+            })
+            .then(json => { 
+                console.log("exito" + json);
+                return { success: true, response: json } 
+            })
+            .catch(error => { 
+                console.log("error" + error);
+                return { success: false, response: error.message } 
+            })
     }
 
     sendPut($body) {
