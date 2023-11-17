@@ -18,13 +18,9 @@ export function inicializarManejadores() {
 
     actualizarTabla(LS_Personas);    
     document.addEventListener('refrescarTablaPersonas', (event) => {
-        // TODO implementar cache
+       
         const personas = localStorage.getObj(entidades);
         // TODO si la api tiene base de datos o guarda en local un array de entidades, llamar de nuevo a la api con GET
-        // const httpHandler = new HttpHandler();
-        // const personas = httpHandler.sendGetSync();
-
-        // localStorage.setObj("personas", personas);
 
         vaciarElemento(formDatos);
         actualizarTabla(personas);
@@ -67,25 +63,6 @@ export function actualizarTabla(personas) {
         crearFormAlta(formDatos);
     });
     divTabla.appendChild(botonAgregar);
-
-
-    // TODO Agregar boton eliminar en cada fila
-
-    // const botonEliminar = document.createElement('button');
-    // botonEliminar.innerText = "Eliminar";
-    // elementos.push(botonEliminar);
-    // botonEliminar.addEventListener('click', () =>{
-    //     let LS_Personas = toObjs(localStorage.getObj(entidades));
-
-    //     LS_Personas = LS_Personas.filter((elemento) => elemento.id !== obj.id);
-
-    //     localStorage.removeItem(entidades);
-    //     localStorage.setObj(entidades, LS_Personas);
-
-    //     const eventRefrescar = new CustomEvent('refrescarTablaPersonas');
-    //     document.dispatchEvent(eventRefrescar);
-    // });
-    // TODO Agregar boton modificar en cada fila
 }
 
 

@@ -20,7 +20,6 @@ function crearCuerpo(data, cabecera) {
 
     data.forEach(obj => {
         const fila = document.createElement("tr");
-        // TODO agregar botones como contenido de la celda si son las ultimas dos)
         cabecera.forEach(c => {
             const celda = document.createElement("td");
             if (c === "id") {

@@ -71,8 +71,7 @@ export function crearFormBaja(formulario, obj) {
             obj_a_eliminar = new Empleado(obj.id, inputs["nombre"], inputs["apellido"], inputs["edad"], inputs["sueldo"], inputs["ventas"]);
         }
         if (obj_a_eliminar) {
-            try {
-                // TODO llamar a la api para modificar objeto
+            try {                
                 const httpHandler = new HttpHandler();
 
                 crearSpinner();
@@ -166,7 +165,6 @@ export function crearFormUpdate(formulario, obj) {
         }
         if (objModificado) {
             try {
-                // TODO llamar a la api para modificar objeto
                 const httpHandler = new HttpHandler();
 
                 crearSpinner();
@@ -282,14 +280,11 @@ export function crearFormAlta(formulario) {
             alert("Datos incorrectos");
             return;
         }
-        // TODO Chequear que la api de numero de id
-        let nuevoId = localStorage.getObj('nextId') || 20000;
-
         if (selectorTipo.selectedIndex == opcionesIndices["Empleado"]) {
-            obj = new Empleado(nuevoId, inputs["nombre"], inputs["apellido"], inputs["edad"], inputs["sueldo"], inputs["ventas"]);
+            obj = new Empleado(undefined, inputs["nombre"], inputs["apellido"], inputs["edad"], inputs["sueldo"], inputs["ventas"]);
         }
         else if (selectorTipo.selectedIndex == opcionesIndices["Cliente"]) {
-            obj = new Cliente(nuevoId, inputs["nombre"], inputs["apellido"], inputs["edad"], inputs["compras"], inputs["telefono"]);
+            obj = new Cliente(undefined, inputs["nombre"], inputs["apellido"], inputs["edad"], inputs["compras"], inputs["telefono"]);
         }
         if (obj) {
             crearSpinner();
@@ -308,10 +303,11 @@ export function crearFormAlta(formulario) {
 
                         localStorage.removeItem(entidades);
                         localStorage.setObj(entidades, LS_Personas);
-                        let siguienteId = obj.id;
 
+                        // let siguienteId = obj.id;
                         // siguienteId++;
                         // localStorage.setItem('nextId', siguienteId);
+                        
                         console.log("Quitando spiner...");
                         quitarSpinner();
                         const event = new CustomEvent('refrescarTablaPersonas', { detail: LS_Personas });
