@@ -50,7 +50,8 @@ export function crearFormUpdate(formulario, obj) {
         document.dispatchEvent(eventRefrescar);
     });
 
-    botonGuardar.addEventListener('click', () => {
+    botonGuardar.addEventListener('click', (e) => {
+        e.preventDefault();
         let inputs = [];
         props.forEach(p => {
             inputs[p] = document.getElementsByTagName("input")[p].value;
@@ -69,17 +70,36 @@ export function crearFormUpdate(formulario, obj) {
             objModificado = new Empleado(obj.id, inputs["nombre"], inputs["apellido"], inputs["edad"], inputs["sueldo"], inputs["ventas"]);
         }
         if (objModificado) {
-            // TODO llamar a la api para modificar objeto
-            // const httpHandler = new HttpHandler();
-            // httpHandler.sendPostAsync(objModificado);
+            try {
+                // TODO llamar a la api para modificar objeto
+                const httpHandler = new HttpHandler();
+                
 
-            let LS_Personas = toObjs(localStorage.getObj(entidades));
-            Arr_Update(LS_Personas, obj, objModificado);
-            localStorage.removeItem(entidades);
-            localStorage.setObj(entidades, LS_Personas);
+                crearSpinner();
+                console.log("Antes del fetch");
+                let response = httpHandler.sendPostAsync(objModificado);
+                response.then(response => {
+                    response.text().then(response =>{
+                        let LS_Personas = toObjs(localStorage.getObj(entidades));
+                        LS_Personas = LS_Personas.filter((elemento) => elemento.id !== obj.id);
+                        LS_Personas.push(objModificado);
 
-            const event = new CustomEvent('refrescarTablaPersonas');
-            document.dispatchEvent(event);
+                        localStorage.removeItem(entidades);
+                        localStorage.setObj(entidades, LS_Personas);
+                        // siguienteId++;
+                        // localStorage.setItem('nextId', siguienteId);
+                        console.log("Quitando spiner...");
+                        quitarSpinner();
+                        const event = new CustomEvent('refrescarTablaPersonas', { detail: LS_Personas });           
+                        document.dispatchEvent(event);
+                    });
+                })
+                .catch(err => {
+                    console.log(err); 
+                })
+            } catch (error) {
+                alert(JSON.stringify(error));
+            }
         }
     });
 
@@ -201,7 +221,7 @@ export function crearFormAlta(formulario) {
                         console.log("Quitando spiner...");
                         quitarSpinner();
                         const event = new CustomEvent('refrescarTablaPersonas', { detail: LS_Personas });           
-                        document.dispatchEvent(event);
+                        document.dispatchEvent(event); 
                     });
                 })
                 .catch(err => {
@@ -210,63 +230,7 @@ export function crearFormAlta(formulario) {
             } catch (error) {
                 alert(JSON.stringify(error));
             }
-
-
-
-
-            // let request = {
-            //     method: 'PUT',
-            //     headers: { "Content-type": "application/json" },
-            //     mode: 'cors',
-            //     body: JSON.stringify(body)
-            // };
-
-            // try {
-            //     const response =  await fetch('http://localhost/PersonasEmpleadosClientes.php', request);
-            //     alert(response);
-            //     const data = response.json();
-            //     alert(data);
-            // } catch (error) {
-            //     alert(error);
-            // }
-
-            // fetch("http://localhost/PersonasEmpleadosClientes.php", request)
-            //     .then(response => {
-            //         if (!response.ok) {
-            //             throw new Error("HTTP error " + response.status);
-            //         }
-            //         console.log(response);
-            //         return response.json();
-            //     })
-            //     .then(json =>{
-            //         console.log(json);
-            //     })
-            //     .catch(error => { 
-            //         console.log("error" + error);
-            //         return false; 
-            //     });
-            // console.log("Dsp del fetch");
             quitarSpinner();
-            // const httpHandler = new HttpHandler();
-            // httpHandler.sendPutAsync(obj).then(() => {
-            //     console.log(obj);
-            //     let LS_Personas = toObjs(localStorage.getObj(entidades));
-            //     LS_Personas.push(obj);
-
-            //     localStorage.removeItem(entidades);
-            //     localStorage.setObj(entidades, LS_Personas);
-            //     let siguienteId = obj.id;
-
-            //     siguienteId++;
-            //     localStorage.setItem('nextId', siguienteId);
-            //     const event = new CustomEvent('refrescarTablaPersonas', { detail: LS_Personas });  
-            //     // TODO CONSULTAR AL PROFE PORQUE NO PUDE           
-            //     document.dispatchEvent(event);
-            //     console.log("Quitando spiner...");
-            //     quitarSpinner();
-            // })
-            // .catch(error => alert(error));
-
         };
 
     });
