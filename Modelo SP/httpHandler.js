@@ -26,7 +26,7 @@ export class HttpHandler {
     }
 
     async sendPutAsync(body) {
-        var initializer = {
+        let initializer = {
             method: 'PUT',
             headers: { "Content-type": "application/json" },
             mode: 'cors',

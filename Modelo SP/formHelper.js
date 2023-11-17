@@ -157,8 +157,8 @@ export function crearFormAlta(formulario) {
     elementos.push(botonGuardar);
 
     // GUARDAR CAMBIOS
-    botonGuardar.addEventListener('click', () => {
-        
+    botonGuardar.addEventListener('click', (e) => {
+        e.preventDefault();
         let inputs = [];
         props = Object.getOwnPropertyNames(obj);
         props.forEach(p => {
@@ -179,28 +179,111 @@ export function crearFormAlta(formulario) {
         }
         if (obj) {
             crearSpinner();
-            const httpHandler = new HttpHandler();
-            httpHandler.sendPutAsync(obj).then(() => {
-                console.log(obj);
-                let LS_Personas = toObjs(localStorage.getObj(entidades));
-                LS_Personas.push(obj);
+            console.log("Antes del fetch");
 
-                localStorage.removeItem(entidades);
-                localStorage.setObj(entidades, LS_Personas);
-                let siguienteId = obj.id;
+            try {
+                const mandarPut = async (object) => {
+                    return await fetch('http://localhost/PersonasEmpleadosClientes.php', {
+                        method: 'PUT', // *GET, POST, PUT, DELETE, etc.
+                        mode: 'cors', // no-cors, *cors, same-origin
+                        cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+                        credentials: 'same-origin', // include, *same-origin, omit
+                        headers: {
+                            'Content-Type': 'application/json'
+                            // 'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        redirect: 'follow', // manual, *follow, error
+                        referrerPolicy: 'no-referrer',
+                        // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, 
+                        //same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+                        body: JSON.stringify(object) // Tiene que coincidir con el Content-Type
+                    });
+                }
+                let response = mandarPut(obj);
+                response.then(response => {
+                    response.json().then(response =>{
+                        console.log(response.id);
+                        obj.id = response.id;
+                        let LS_Personas = toObjs(localStorage.getObj(entidades));
+                        LS_Personas.push(obj);
 
-                siguienteId++;
-                localStorage.setItem('nextId', siguienteId);
-                const event = new CustomEvent('refrescarTablaPersonas', { detail: LS_Personas });  
-                // TODO CONSULTAR AL PROFE PORQUE NO PUDE           
-                document.dispatchEvent(event);
-                console.log("Quitando spiner...");
-                quitarSpinner();
-            })
-            .catch(error => alert(error))
+                        localStorage.removeItem(entidades);
+                        localStorage.setObj(entidades, LS_Personas);
+                        let siguienteId = obj.id;
+
+                        // siguienteId++;
+                        // localStorage.setItem('nextId', siguienteId);
+                        console.log("Quitando spiner...");
+                        quitarSpinner();
+                        const event = new CustomEvent('refrescarTablaPersonas', { detail: LS_Personas });           
+                        document.dispatchEvent(event);
+                    });
+                })
+                .catch(err => {
+                    console.log(err); 
+                })
+            } catch (error) {
+                alert(JSON.stringify(error));
+            }
+
+
+
+
+            // let request = {
+            //     method: 'PUT',
+            //     headers: { "Content-type": "application/json" },
+            //     mode: 'cors',
+            //     body: JSON.stringify(body)
+            // };
+
+            // try {
+            //     const response =  await fetch('http://localhost/PersonasEmpleadosClientes.php', request);
+            //     alert(response);
+            //     const data = response.json();
+            //     alert(data);
+            // } catch (error) {
+            //     alert(error);
+            // }
+
+            // fetch("http://localhost/PersonasEmpleadosClientes.php", request)
+            //     .then(response => {
+            //         if (!response.ok) {
+            //             throw new Error("HTTP error " + response.status);
+            //         }
+            //         console.log(response);
+            //         return response.json();
+            //     })
+            //     .then(json =>{
+            //         console.log(json);
+            //     })
+            //     .catch(error => { 
+            //         console.log("error" + error);
+            //         return false; 
+            //     });
+            // console.log("Dsp del fetch");
+            quitarSpinner();
+            // const httpHandler = new HttpHandler();
+            // httpHandler.sendPutAsync(obj).then(() => {
+            //     console.log(obj);
+            //     let LS_Personas = toObjs(localStorage.getObj(entidades));
+            //     LS_Personas.push(obj);
+
+            //     localStorage.removeItem(entidades);
+            //     localStorage.setObj(entidades, LS_Personas);
+            //     let siguienteId = obj.id;
+
+            //     siguienteId++;
+            //     localStorage.setItem('nextId', siguienteId);
+            //     const event = new CustomEvent('refrescarTablaPersonas', { detail: LS_Personas });  
+            //     // TODO CONSULTAR AL PROFE PORQUE NO PUDE           
+            //     document.dispatchEvent(event);
+            //     console.log("Quitando spiner...");
+            //     quitarSpinner();
+            // })
+            // .catch(error => alert(error));
 
         };
-  
+
     });
 
     const botonCancelar = document.createElement('button');
