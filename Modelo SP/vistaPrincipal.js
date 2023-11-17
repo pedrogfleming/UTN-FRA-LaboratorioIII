@@ -1,5 +1,5 @@
 import { crearTabla } from "./tablaDinamica.js";
-import { crearFormUpdate, crearFormAlta, crearSelector } from "./formHelper.js";
+import { crearFormUpdate, crearFormAlta, crearSelector, crearFormBaja } from "./formHelper.js";
 import { toObjs } from "./persona.js"
 import { Arr_GetAllUniqueProps } from "./arrayHelper.js"
 import { crearSpinner, quitarSpinner } from "./spinnerHelper.js"
@@ -41,15 +41,13 @@ export function inicializarManejadores() {
         crearFormUpdate(formDatos, obj);
     });
     document.addEventListener('eliminarEntidad', (event) => {
-        let LS_Personas = toObjs(localStorage.getObj(entidades));
-        let targetid = parseInt(event.detail);
-        LS_Personas = LS_Personas.filter((elemento) => elemento.id !== targetid);
+        const LS_Personas = toObjs(localStorage.getObj(entidades));
+        let idFila = event.detail;
+        let obj = LS_Personas.find((persona) => persona.id == idFila);
 
-        localStorage.removeItem(entidades);
-        localStorage.setObj(entidades, LS_Personas);
-
-        const eventRefrescar = new CustomEvent('refrescarTablaPersonas');
-        document.dispatchEvent(eventRefrescar);
+        vaciarElemento(formDatos);
+        GenerarVista("form");
+        crearFormBaja(formDatos, obj);
     });
 }
 
