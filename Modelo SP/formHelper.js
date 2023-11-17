@@ -180,7 +180,7 @@ export function crearFormAlta(formulario) {
         if (obj) {
             crearSpinner();
             const httpHandler = new HttpHandler();
-            httpHandler.sendPostAsync(obj).then(() => {
+            httpHandler.sendPutAsync(obj).then(() => {
                 console.log(obj);
                 let LS_Personas = toObjs(localStorage.getObj(entidades));
                 LS_Personas.push(obj);

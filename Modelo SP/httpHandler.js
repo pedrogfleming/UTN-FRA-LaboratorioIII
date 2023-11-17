@@ -25,9 +25,9 @@ export class HttpHandler {
         }
     }
 
-    async sendPostAsync(body) {
+    async sendPutAsync(body) {
         var initializer = {
-            method: 'POST',
+            method: 'PUT',
             headers: { "Content-type": "application/json" },
             mode: 'cors',
             cache: 'default',
