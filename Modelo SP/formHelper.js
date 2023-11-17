@@ -158,6 +158,7 @@ export function crearFormAlta(formulario) {
 
     // GUARDAR CAMBIOS
     botonGuardar.addEventListener('click', () => {
+        
         let inputs = [];
         props = Object.getOwnPropertyNames(obj);
         props.forEach(p => {
@@ -179,30 +180,27 @@ export function crearFormAlta(formulario) {
         if (obj) {
             crearSpinner();
             const httpHandler = new HttpHandler();
-            httpHandler.sendPostAsync(obj).then(response => {
-                if (response.success) {
-                    let LS_Personas = toObjs(localStorage.getObj(entidades));
-                    LS_Personas.push(obj);
+            httpHandler.sendPostAsync(obj).then(() => {
+                console.log(obj);
+                let LS_Personas = toObjs(localStorage.getObj(entidades));
+                LS_Personas.push(obj);
 
-                    localStorage.removeItem(entidades);
-                    localStorage.setObj(entidades, LS_Personas);
-                    let siguienteId = obj.id;
+                localStorage.removeItem(entidades);
+                localStorage.setObj(entidades, LS_Personas);
+                let siguienteId = obj.id;
 
-                    siguienteId++;
-                    localStorage.setItem('nextId', siguienteId);
-
-                    const event = new CustomEvent('refrescarTablaPersonas', { detail: LS_Personas });
-                    document.dispatchEvent(event);
-                }
-                else {
-                    alert(response.response);
-                }
+                siguienteId++;
+                localStorage.setItem('nextId', siguienteId);
+                const event = new CustomEvent('refrescarTablaPersonas', { detail: LS_Personas });  
+                // TODO CONSULTAR AL PROFE PORQUE NO PUDE           
+                document.dispatchEvent(event);
+                console.log("Quitando spiner...");
+                quitarSpinner();
             })
             .catch(error => alert(error))
-            .finally(() =>{
-                quitarSpinner();
-            });
+
         };
+  
     });
 
     const botonCancelar = document.createElement('button');

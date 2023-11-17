@@ -38,18 +38,12 @@ export class HttpHandler {
                 if (!response.ok) {
                     throw new Error("HTTP error " + response.status);
                 }
-                else {                    
-                    return response.json();
-                }
-            })
-            .then(json => { 
-                console.log("exito" + json);
-                return { success: true, response: json } 
+                return true;
             })
             .catch(error => { 
                 console.log("error" + error);
-                return { success: false, response: error.message } 
-            })
+                return false; 
+            });
     }
 
     sendPut($body) {

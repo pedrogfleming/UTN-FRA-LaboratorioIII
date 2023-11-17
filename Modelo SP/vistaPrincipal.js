@@ -19,10 +19,13 @@ export function inicializarManejadores() {
     actualizarTabla(LS_Personas);    
     document.addEventListener('refrescarTablaPersonas', (event) => {
         // TODO implementar cache
-        const httpHandler = new HttpHandler();
-        const personas = httpHandler.sendGetSync();
-        localStorage.setObj("personas", personas);
-        
+        const personas = localStorage.getObj(entidades);
+        // TODO si la api tiene base de datos o guarda en local un array de entidades, llamar de nuevo a la api con GET
+        // const httpHandler = new HttpHandler();
+        // const personas = httpHandler.sendGetSync();
+
+        // localStorage.setObj("personas", personas);
+
         vaciarElemento(formDatos);
         actualizarTabla(personas);
         dataOut.style.display = "block";
